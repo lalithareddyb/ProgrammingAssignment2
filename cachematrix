@@ -1,0 +1,69 @@
+## The following functions create a square invertible matrix
+## make the inverse of the matrix available in the cache environment
+
+
+makeCacheMatrix <- function(x = matrix()) {
+  
+  cache <- NULL
+  
+  set <- function(y) {
+    x <<- y
+    cache <<- NULL
+  }
+  
+  
+  get <- function() x
+  # invert the matrix and store in cache
+  setMatrix <- function(inverse) cache <<- inverse
+  # get the inverted matrix from cache
+  getInverse <- function() cache
+  
+  # return the created functions to the working environment
+  list(set = set, get = get,
+       setMatrix = setMatrix,
+       getInverse = getInverse)
+  
+}
+
+
+## Write a short comment describing this function
+
+cacheSolve <- function(x, ...) {
+  cache <- x$getInverse()
+  
+  # return inverted matrix from cache if it exists
+
+  if (!is.null(cache)) {
+    message("getting cached data")
+    
+    # display matrix in console
+    return(cache)
+  }
+  
+  # create matrix since it does not exist
+  matrix <- x$get()
+
+  tryCatch( {
+
+    cache <- solve(matrix, ...)
+  },
+  error = function(e) {
+    message("Error:")
+    message(e)
+    
+    return(NA)
+  },
+  warning = function(e) {
+    message("Warning:")
+    message(e)
+    
+    return(NA)
+  },
+  finally = {
+   
+    x$setMatrix(cache)
+  } )
+  
+  # display matrix in console
+  return (cache)
+}
